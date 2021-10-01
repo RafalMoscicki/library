@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RentalRepository extends CrudRepository<Rental, Long> {
+
+    Rental save(Rental rental);
 }

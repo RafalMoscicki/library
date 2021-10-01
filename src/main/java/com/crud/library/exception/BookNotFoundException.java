@@ -1,4 +1,4 @@
-package com.crud.library.service;
+package com.crud.library.exception;
 
 public class BookNotFoundException extends Exception {
 

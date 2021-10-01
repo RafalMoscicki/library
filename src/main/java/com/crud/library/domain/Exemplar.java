@@ -20,5 +20,10 @@ public class Exemplar {
     private ExemplarStatus status;
 
     @ManyToOne
+    @JoinColumn(name = "book_id")
     private Book book;
+
+    public void setStatus(ExemplarStatus status) {
+        this.status = status;
+    }
 }

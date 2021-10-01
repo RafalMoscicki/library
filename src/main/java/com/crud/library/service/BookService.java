@@ -1,6 +1,7 @@
 package com.crud.library.service;
 
 import com.crud.library.domain.Book;
+import com.crud.library.exception.BookNotFoundException;
 import com.crud.library.repository.BookRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class BookDbService {
+public class BookService {
 
     @Autowired
     private final BookRepository bookRepository;
