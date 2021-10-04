@@ -3,6 +3,7 @@ package com.crud.library.controller;
 import com.crud.library.domain.*;
 import com.crud.library.exception.ExemplarNotAvailableException;
 import com.crud.library.exception.ExemplarNotFoundException;
+import com.crud.library.exception.RentalNotFoundException;
 import com.crud.library.exception.UserNotFoundException;
 import com.crud.library.mapper.RentalMapper;
 import com.crud.library.service.ExemplarService;
@@ -24,9 +25,7 @@ public class RentalController {
 
     @PostMapping(value = "rentBook", consumes = MediaType.APPLICATION_JSON_VALUE)
     public RentalDto rentBook(@RequestBody RentalCreationDto rentalCreationDto)
-            throws ExemplarNotFoundException,
-            UserNotFoundException,
-            ExemplarNotAvailableException {
+            throws ExemplarNotFoundException, UserNotFoundException, ExemplarNotAvailableException {
 
         User user = userService.findUserById(rentalCreationDto.getUserId());
         Exemplar exemplar = exemplarService.findExemplarById(rentalCreationDto.getExemplarId());
@@ -43,24 +42,13 @@ public class RentalController {
 
     @PostMapping(value = "returnBook", consumes = MediaType.APPLICATION_JSON_VALUE)
     public RentalDto returnBook(@RequestBody RentalReturnDto rentalReturnDto)
-            throws UserNotFoundException, ExemplarNotFoundException {
-
+            throws UserNotFoundException, ExemplarNotFoundException, RentalNotFoundException {
         User user = userService.findUserById(rentalReturnDto.getUserId());
         Exemplar exemplar = exemplarService.findExemplarById(rentalReturnDto.getExemplarId());
-
-        if (exemplar.getStatus() == ExemplarStatus.BORROWED) {
+        Rental rental = rentalService.returnBook(user, exemplar, rentalReturnDto);
+        if (rental.getReturnDate() != null) {
             exemplarService.statusChange(rentalReturnDto.getExemplarId(), ExemplarStatus.AVAILABLE);
-            Rental rental = rentalService.createRental(exemplar, user);
-            Rental saveRental = rentalService.saveRental(rental);
-            return rentalMapper.mapRentalToRentalDto(saveRental);
-        } else if ((((exemplar.getStatus() == (ExemplarStatus.DESTROYED)
-                || (exemplar.getStatus() == (ExemplarStatus.LOST))) && rentalReturnDto.isPaid()))) {
-            exemplarService.statusChange(rentalReturnDto.getExemplarId(), ExemplarStatus.AVAILABLE);
-            Rental rental = rentalService.createRental(exemplar, user);
-            Rental saveRental = rentalService.saveRental(rental);
-            return rentalMapper.mapRentalToRentalDto(saveRental);
-        } else {
-            // deleteById
         }
+        return rentalMapper.mapRentalToRentalDto(rental);
     }
 }

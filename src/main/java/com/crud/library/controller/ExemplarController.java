@@ -24,9 +24,8 @@ public class ExemplarController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ExemplarDto addExemplar(@RequestBody ExemplarDto exemplarDto)
             throws BookNotFoundException {
-        Exemplar exemplar = exemplarMapper.mapToExemplar(
-                exemplarDto,
-                bookService.findBookById(exemplarDto.getBookId()));
+        Exemplar exemplar = exemplarMapper.
+                mapToExemplar(exemplarDto, bookService.findBookById(exemplarDto.getBookId()));
         Exemplar savedExemplar = exemplarService.addExemplar(exemplar);
         return exemplarMapper.mapToExemplarDto(savedExemplar);
     }

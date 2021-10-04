@@ -1,6 +1,8 @@
 package com.crud.library.service;
 
+import com.crud.library.controller.RentalReturnDto;
 import com.crud.library.domain.Exemplar;
+import com.crud.library.domain.ExemplarStatus;
 import com.crud.library.domain.Rental;
 import com.crud.library.domain.User;
 import com.crud.library.exception.RentalNotFoundException;
@@ -18,28 +20,26 @@ public class RentalService {
     @Autowired
     private final RentalRepository rentalRepository;
 
-    @Autowired
-    private final Rental rental;
-
-    public LocalDate createRentDate() {
-        rental.setRentDate(LocalDate.now());
-        return LocalDate.now();
-    }
-
-    public LocalDate createReturnDate() {
-        rental.setReturnDate(LocalDate.now().plusMonths(1));
-        return LocalDate.now().plusMonths(1);
-    }
-
-    public Rental findById(long id) throws RentalNotFoundException {
-        return rentalRepository.findById(id).orElseThrow(() -> new RentalNotFoundException(id));
-    }
-
     public Rental saveRental(final Rental rental) {
         return rentalRepository.save(rental);
     }
 
     public Rental createRental(Exemplar exemplar, User user) {
-        return new Rental(rental.getId(), exemplar, user, createRentDate(), createReturnDate());
+        return new Rental(exemplar, user, LocalDate.now());
+    }
+
+    public Rental returnBook(User user, Exemplar exemplar, RentalReturnDto rentalReturnDto) throws RentalNotFoundException {
+        Rental rental = rentalRepository.findByUserAndExemplarOrderByRentDateDesc(user, exemplar)
+                .orElseThrow(() -> new RentalNotFoundException(user.getId(), exemplar.getId()));
+        if (canReturn(rentalReturnDto, exemplar)) {
+            rental.setReturnDate(LocalDate.now());
+            return saveRental(rental);
+        }
+        return rental;
+    }
+
+    private boolean canReturn(RentalReturnDto rentalReturnDto, Exemplar exemplar) {
+        return exemplar.getStatus() == ExemplarStatus.BORROWED || ((exemplar.getStatus() == ExemplarStatus.DESTROYED
+                || exemplar.getStatus() == ExemplarStatus.LOST) && rentalReturnDto.isPaid());
     }
 }
