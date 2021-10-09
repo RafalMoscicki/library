@@ -1,12 +1,14 @@
 package com.crud.library.service;
 
-import com.crud.library.exception.ExemplarNotFoundException;
 import com.crud.library.domain.Exemplar;
 import com.crud.library.domain.ExemplarStatus;
+import com.crud.library.exception.ExemplarNotFoundException;
 import com.crud.library.repository.ExemplarRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 
 @Service
@@ -16,6 +18,7 @@ public class ExemplarService {
     @Autowired
     private final ExemplarRepository exemplarRepository;
 
+    @Transactional
     public Exemplar addExemplar(final Exemplar exemplar) {
         return exemplarRepository.save(exemplar);
     }

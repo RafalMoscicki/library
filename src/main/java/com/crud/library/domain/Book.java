@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -28,6 +29,14 @@ public class Book {
 
     private int year;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
-    private List<Exemplar> exemplars;
+    @OneToMany(mappedBy = "book",
+            targetEntity = Exemplar.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<Exemplar> exemplars = new ArrayList<>();
+
+    public void addExemplar(Exemplar exemplar) {
+        exemplars.add(exemplar);
+        exemplar.setBook(this);
+    }
 }

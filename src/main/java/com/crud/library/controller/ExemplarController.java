@@ -1,5 +1,6 @@
 package com.crud.library.controller;
 
+import com.crud.library.domain.Book;
 import com.crud.library.domain.ExemplarDto;
 import com.crud.library.domain.Exemplar;
 import com.crud.library.domain.ExemplarStatus;
@@ -27,6 +28,9 @@ public class ExemplarController {
         Exemplar exemplar = exemplarMapper.
                 mapToExemplar(exemplarDto, bookService.findBookById(exemplarDto.getBookId()));
         Exemplar savedExemplar = exemplarService.addExemplar(exemplar);
+        Book book = bookService.findBookById(exemplarDto.getBookId());
+        book.addExemplar(exemplar);
+        bookService.addBook(book);
         return exemplarMapper.mapToExemplarDto(savedExemplar);
     }
 

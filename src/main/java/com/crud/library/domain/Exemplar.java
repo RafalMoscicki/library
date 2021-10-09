@@ -19,11 +19,15 @@ public class Exemplar {
     @Enumerated(EnumType.STRING)
     private ExemplarStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
     public void setStatus(ExemplarStatus status) {
         this.status = status;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
     }
 }

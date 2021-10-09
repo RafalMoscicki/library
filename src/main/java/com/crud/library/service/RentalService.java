@@ -28,8 +28,8 @@ public class RentalService {
         return new Rental(exemplar, user, LocalDate.now());
     }
 
-    public Rental returnBook(User user, Exemplar exemplar, RentalReturnDto rentalReturnDto) throws RentalNotFoundException {
-        Rental rental = rentalRepository.findByUserAndExemplarOrderByRentDateDesc(user, exemplar)
+    public Rental returnBook(User user, Exemplar exemplar, RentalReturnDto rentalReturnDto ) throws RentalNotFoundException {
+        Rental rental = rentalRepository.findByExemplar_IdOrderByRentDateDesc(exemplar.getId())
                 .orElseThrow(() -> new RentalNotFoundException(user.getId(), exemplar.getId()));
         if (canReturn(rentalReturnDto, exemplar)) {
             rental.setReturnDate(LocalDate.now());

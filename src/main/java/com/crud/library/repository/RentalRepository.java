@@ -13,5 +13,5 @@ public interface RentalRepository extends CrudRepository<Rental, Long> {
 
     Rental save(Rental rental);
 
-    Optional<Rental> findByUserAndExemplarOrderByRentDateDesc(User user, Exemplar exemplar);
+    Optional<Rental> findByExemplar_IdOrderByRentDateDesc(long exemplarId);
 }
